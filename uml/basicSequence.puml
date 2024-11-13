@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+group #LightPink " JOURNAL "
+group #WhiteSmoke " DayBook "
+group #LightBlue " GetDayBooks "
+User -> DayBook: **Request** : Get DayBook  . Ref:- { ReceiverId +  Date }
+group #wheat " Validation "
+TransactionType -> TransactionType: Record check Validation ( TansactionType )
+end
+DayBook <--> TransactionType: Fetching related data ( Closed TransactionType)
+
+DayBook --[#darkgreen]> User: **Response** : [200] Record succesfully fetched .                     **OR**
+DayBook --[#red]> User: **Response** : [404] for record not found exception
+end
+group #LightBlue " CreateDayBook "
+User -> TransactionType:  **Request** : Create DayBook . Ref:- { ReceiverId }
+group #wheat " Validation "
+TransactionType -> TransactionType: Record Duplicate Validation ( for Date )
+end
+TransactionType --[#darkgreen]> User: **Response** : [201] Record succesfully created .                     **OR**
+TransactionType --[#red]> User: **Response** : [400]  Record is not created .
+end
+end
+group #WhiteSmoke " TransactionType "
+group #LightBlue " GetAllTransactionType "
+User -> TransactionType:  **Request** : Get AllTransactionType . Ref:- { ReceiverId + dayBookId + Ref-Id +(RECEIPT/VOUCHER/ALL) + (Person-uuid/ SaleOrder/ SalesBill/ SalesInvoice) + (SAVED/ OPEN/ All)}
+group #wheat " Validation "
+TransactionType -> TransactionType: Record check Validation ( TransactionType )
+end
+TransactionType <--> TransactionType: fetching related data ( Receipt )
+TransactionType --[#darkgreen]> User:**Response** : [200] Record succesfully fetched .                     **OR**
+TransactionType --[#red]> User: **Response** : [404]  Record not found exception
+end
+group #LightBlue " CreateTransactionType "
+User -> TransactionType:  **Request** : Create TransactionType . Ref:- { ReceiverId + dayBookId + ( Freight-Charge/ Packaging/ Miscellaneous) }
+TransactionType --[#darkgreen]> User: **Response** : [201] Record succesfully created .                     **OR**
+TransactionType --[#red]> User: **Response** : [400]  Record is not created .
+end
+group #LightBlue " GetTransactionType "
+User -> TransactionType:  **Request** : Get TransactionType  . Ref:- ( ReceiverId + dayBookId + transactionId )
+group #wheat " Validation "
+TransactionType -> TransactionType: Record check Validation ( TransactionType )
+end
+TransactionType <--> TransactionType: fetching related data ( Receipt )
+TransactionType --[#darkgreen]> User: **Response** : [200] Record succesfully fetched .                     **OR**
+TransactionType --[#red]> User: **Response** : [404] for record not found exception
+end
+group #LightBlue " PatchTransactionType "
+User -> TransactionType:  **Request** : Patch TransactionType  .Ref:- ( ReceiverId + dayBookId+ transactionId )
+group #wheat " Validation "
+TransactionType -> TransactionType: Record check Validation ( TransactionType )
+end
+TransactionType --[#darkgreen]> User: **Response** : [200] Record succesfully fetched .                     **OR**
+TransactionType --[#red]> User: **Response** : [404] for record not found exception
+end
+group #LightBlue " DeleteTransactionType "
+User -> TransactionType:  **Request** : Delete TransactionType . Ref:- ( ReceiverId+ dayBookId + transactionId )
+group #wheat " Validation "
+TransactionType -> TransactionType: Record check Validation ( TransactionType )
+end
+TransactionType --[#darkgreen]> User: **Response** : [200] Record succesfully fetched .                     **OR**
+TransactionType --[#red]> User: **Response** : [404] for record not found exception
+end
+end
+end
+@enduml

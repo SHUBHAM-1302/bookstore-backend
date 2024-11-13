@@ -1,0 +1,290 @@
+openapi: 3.0.1
+info:
+  title: Book Store
+  description: "This would cover the definition and documentation of the maintain a complete and accurate record of all financial transactions for the period, including those recorded in the daybook, as well as vouchers and receipts. The journal will serve as the source for preparing financial statements and will be used to track expenses, revenues, and other financial activities. All transactions recorded in the journal will be supported by appropriate documentation, including vouchers and receipts, and will be maintained in accordance with generally accepted accounting principles. The journal will provide a clear and detailed record of all transactions and will be reviewed regularly to ensure accuracy and completeness."
+  termsOfService: 'http://kanilebettu.com'
+  contact:
+    email: merco@kanilebettu.com
+  license:
+    name: KANILEBETTU
+    url: 'http://kanilebettu.com'
+  version: 0.0.1
+servers:
+  - url: 'https://servicesdev.mercotrace.com/'
+paths:
+
+
+
+  '/v1/md/book/':
+    get:
+      tags:
+        - BookStore
+      summary: get book Summary based on bookid
+      description:  get Summary based on ssid
+      operationId: getBooks
+
+      responses:
+        '201':
+          description: receipt successfully created .
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/v1/md/book/{bookid}/':
+    get:
+      tags:
+        - BookStore
+      summary: get book Summary based on bookid
+      description:  get Summary based on ssid
+      operationId: getBooksBybookId
+      parameters:
+        - name: bookid
+          in: path
+          description: A unique identifier for books
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: sales summary  are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - BookStore
+      summary: Update multiple Voucher based on VoucherId . To update a voucher, the accountant or book keeper typically needs to locate the original voucher and make the necessary changes.
+      description: Carries out patch operation and returns updated object
+      operationId: updateBook
+      parameters:
+        - name: bookid
+          in: path
+          description: A unique identifier for books
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description:
+          Valid operation is UPDATE. property should contain name of
+          the VO attribute that needs to be updated. value should contain the
+          three value [status , DayBookId , paidAmount, paymentModeId,referenceAmount,modifiedBy,modifiedOn].
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JRNLPatchRequest'
+        required: true
+      responses:
+        '200':
+          description: sales summary  are successfully retrieved from the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description:
+            Malformed request (e.g. required parameters are not present in the
+            request body).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+components:
+  schemas:
+
+
+
+    JRNLMultiplePatchRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        jRNLPatchRequest:
+          $ref: "#/components/schemas/JRNLPatchRequest"
+    JRNLPatchRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/JRNLPatchDocument"
+
+
+
+    JRNLPatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      required:
+        - "op"
+        - "path"
+      properties:
+        op:
+          type: string
+          description: The operation to be performed
+          enum:
+            - "add"
+            - "remove"
+            - "replace"
+            - "move"
+            - "copy"
+            - "test"
+        path:
+          type: string
+          description: A JSON-Pointer
+        value:
+          type: object
+          description: The value to be used within the operations.
+        from:
+          type: string
+          description: A string containing a JSON Pointer value.
+
+    Error:
+      title: Error
+      required:
+        - message
+        - advice
+        - errorCode
+      type: object
+      properties:
+        message:
+          type: string
+          description: contains the particular error message of the origin
+        advice:
+          type: string
+          description: denotes the origin of the error
+        rootCause:
+          type: string
+          description: provides the root cause of the error
+        errorCode:
+          type: integer
+          format: int32
+          description: >-
+            http status code for return value. there are common codes for all
+            methods - \'403\', denoting a forbidden access, \'500\' for an
+            internal server issue.
+      description: Generic error object
+
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: integer
+          format: int64
+        rate:
+          type: number
+          format: double
+        price:
+          type: number
+          format: double
+        auther:
+          type: string
+          description: name for lot
+          example: a
+        description:
+          type: string
+          description: name for lot
+          example: a
+        title:
+          type: string
+          description: name for lot
+          example: a
+        isSold:
+          type: boolean
+          description: whether the book is sold
+          example: false
+
